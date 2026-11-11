@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neudralica — Mesa de trabajo 3D</title>
+  </head>
+  <body>
+    <header>
+      <h1>Neudralica</h1>
+      <p>Mesa de trabajo 3D de hidráulica y neumática</p>
+    </header>
+    <main>
+      <p id="instructions">Arrastra para girar; usa la rueda para acercar y el botón derecho para desplazar. Flechas para desplazar la cámara. Cuadrícula: 10 cm.</p>
+      <button id="reset-camera" type="button">Restablecer cámara</button>
+      <div id="viewport" aria-describedby="instructions"></div>
+      <p id="status" role="status">Preparando la mesa…</p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,5 +1,6 @@
 import { PerspectiveCamera, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createWorkspace } from './scene.ts';
 import './style.css';
 
@@ -8,6 +9,7 @@ const status = document.querySelector<HTMLParagraphElement>('#status')!;
 const resetButton = document.querySelector<HTMLButtonElement>('#reset-camera')!;
 
 function start() {
+  let disposed = false;
   const renderer = new WebGLRenderer({ antialias: true });
   const workspace = createWorkspace();
   const camera = new PerspectiveCamera(45, 1, 0.01, 100);
@@ -43,9 +45,23 @@ function start() {
   observer.observe(viewport);
   resize();
   reset();
-  status.textContent = 'Mesa vacía. Los componentes y la simulación física se incorporarán en próximas versiones.';
+  status.textContent = 'Cargando la válvula…';
+  void new GLTFLoader().loadAsync(new URL('../vlv.glb', import.meta.url).href)
+    .then((gltf) => {
+      if (!workspace.addValve(gltf.scene)) return;
+      renderer.domElement.setAttribute('aria-label', 'Vista 3D de la mesa de trabajo con una electroválvula');
+      status.textContent = 'Electroválvula cargada a escala original. Vista visual, sin simulación física. Usa el zoom para ver los detalles.';
+      render();
+    })
+    .catch((error: unknown) => {
+      if (disposed) return;
+      status.setAttribute('role', 'alert');
+      status.textContent = 'No se pudo cargar la válvula. La mesa sigue disponible; recarga la página para intentarlo de nuevo.';
+      console.error(error);
+    });
 
   return () => {
+    disposed = true;
     observer.disconnect();
     resetButton.removeEventListener('click', reset);
     controls.removeEventListener('change', render);

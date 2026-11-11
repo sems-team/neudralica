@@ -2,7 +2,7 @@
 
 Mesa de trabajo 3D para visualizar componentes de hidráulica y neumática en el navegador, construida con **Three.js, TypeScript y Vite**, sin framework de interfaz.
 
-La versión inicial muestra una mesa de 2 × 2 metros, cuadrícula de 10 cm, iluminación y cámara orbital. Todavía no incluye componentes, conexiones, persistencia ni simulación física.
+La mesa mide 2 × 2 metros e incluye cuadrícula de 10 cm, iluminación, cámara orbital y una electroválvula cargada desde `vlv.glb`. La válvula se muestra a la escala y orientación exportadas, centrada y apoyada sobre la superficie, sin el objeto «Fondo» del archivo. Su alcance es únicamente visual: no incluye conexiones, persistencia ni simulación física. Las dimensiones exportadas no se han contrastado con una ficha técnica.
 
 ## Requisitos
 
@@ -47,7 +47,7 @@ npm run build
 npm run preview
 ```
 
-- `npm test`: comprueba dimensiones, superficie y liberación de recursos con el runner nativo de Node.
+- `npm test`: comprueba la mesa, la carga del GLB real, su colocación y la liberación de recursos, incluidas cargas tardías y modelos inválidos, con el runner nativo de Node, sin navegador ni GPU.
 - `npm run typecheck`: comprueba TypeScript sin generar archivos.
 - `npm run build`: comprueba tipos y genera el sitio estático en `dist/`.
 - `npm run preview`: sirve la compilación local, normalmente en `http://localhost:4173`. No es un servidor de producción.
@@ -62,6 +62,8 @@ Para publicar, sirve `dist/` mediante alojamiento estático. Este repositorio no
 - Enfoca la vista con Tab y usa las flechas para desplazar la cámara.
 - Pulsa **Restablecer cámara** para volver a la vista inicial.
 
+La válvula conserva su tamaño exportado; usa el zoom para examinarla. Durante la carga se muestra su estado. Si falla, la mesa sigue disponible y puedes recargar la página para reintentar.
+
 En pantallas táctiles, usa un dedo para girar y dos para acercar o desplazar. La vista se adapta al tamaño disponible.
 
 ## Organización y agentes
@@ -70,6 +72,7 @@ En pantallas táctiles, usa un dedo para girar y dos para acercar o desplazar. L
 index.html       Interfaz y entrada
 src/main.ts      Renderer, cámara, controles y DOM
 src/scene.ts     Mesa, cuadrícula, luces y limpieza
+src/valve.ts     Colocación de la válvula y liberación de recursos del GLB
 src/style.css    Estilos
 tests/           Comprobaciones de escena
 AGENTS.md        Convenciones y flujo para agregar componentes
@@ -77,6 +80,8 @@ CLAUDE.md        Importación de instrucciones compartidas
 ```
 
 Lee [AGENTS.md](AGENTS.md) antes de modificar el proyecto. Incluye el flujo mínimo para agregar componentes, unidades y reglas de mantenimiento. No fija todavía un motor físico ni un contrato de conexiones.
+
+El recurso `vlv.glb` fue proporcionado con el proyecto y exportado desde Blender. No se descargaron modelos ni texturas externos. La procedencia y licencia del modelo no se han verificado; la licencia del código no acredita por sí sola los derechos sobre el recurso.
 
 [Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md) y [Antigravity](https://antigravity.google/docs/rules/) admiten `AGENTS.md` en la raíz. Para [Claude Code](https://code.claude.com/docs/en/memory), `CLAUDE.md` importa `@AGENTS.md`, también útil para versiones sin carga nativa. Abre los agentes desde la raíz y comprueba las instrucciones cargadas; las políticas locales pueden afectar su lectura.
 

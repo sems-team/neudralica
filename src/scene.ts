@@ -1,6 +1,10 @@
 import { AmbientLight, BoxGeometry, Color, DirectionalLight, GridHelper, Mesh, MeshStandardMaterial, Scene } from 'three';
+import type { Object3D } from 'three';
+import { prepareValve } from './valve.ts';
 
 export function createWorkspace() {
+  let disposed = false;
+  let valve: ReturnType<typeof prepareValve> | undefined;
   const scene = new Scene();
   scene.background = new Color('#e8edf0');
 
@@ -22,7 +26,22 @@ export function createWorkspace() {
 
   return {
     scene,
+    addValve(root: Object3D) {
+      const next = prepareValve(root);
+      if (disposed) {
+        next.dispose();
+        return false;
+      }
+      valve?.model.removeFromParent();
+      valve?.dispose();
+      valve = next;
+      scene.add(valve.model);
+      return true;
+    },
     dispose() {
+      if (disposed) return;
+      disposed = true;
+      valve?.dispose();
       geometry.dispose();
       material.dispose();
       grid.dispose();
